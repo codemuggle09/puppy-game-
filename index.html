@@ -292,3 +292,43 @@
 
         // Initial check
         checkFit(puppyX, puppyY);
+         // Drag functionality
+        puppy.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            
+            let shiftX = e.clientX - puppy.getBoundingClientRect().left;
+            let shiftY = e.clientY - puppy.getBoundingClientRect().top;
+            
+            function moveAt(pageX, pageY) {
+                let newX = pageX - shiftX - gameArea.getBoundingClientRect().left;
+                let newY = pageY - shiftY - gameArea.getBoundingClientRect().top;
+                
+                // Keep puppy in bounds
+                newX = Math.max(0, Math.min(newX, gameArea.offsetWidth - 150));
+                newY = Math.max(0, Math.min(newY, gameArea.offsetHeight - 150));
+                
+                puppy.style.left = newX + 'px';
+                puppy.style.top = newY + 'px';
+                
+                checkFit(newX, newY);
+            }
+            
+            function onMouseMove(event) {
+                if (isDragging) {
+                    moveAt(event.pageX, event.pageY);
+                }
+            }
+            
+            document.addEventListener('mousemove', onMouseMove);
+            
+            document.addEventListener('mouseup', function handler() {
+                isDragging = false;
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', handler);
+            });
+        });
+
+        puppy.ondragstart = () => false; // Prevent default drag
+    </script>
+</body>
+</html>
