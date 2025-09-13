@@ -1,4 +1,4 @@
-# Perfect Puppy Fit
+# Perfect Puppy Fit (a fun hackathon task)
 
 A simple drag-and-drop game where you fit a puppy into its outline.
 
