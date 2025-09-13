@@ -176,3 +176,119 @@
             font-size: 16px;
             line-height: 1.6;
         }
+            .status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff6b9d;
+            min-height: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Perfect Puppy Fit</h1>
+        <p class="subtitle"></p>
+        
+        <div class="game-area" id="gameArea">
+            <div class="puppy-outline" id="outline"></div>
+            <div class="puppy-image" id="puppy"></div>
+        </div>
+
+        <div class="volume-control">
+            <button class="volume-button" id="volumeDown">−</button>
+            <div class="volume-display" id="volumeDisplay">🔇 0</div>
+            <button class="volume-button" id="volumeUp">+</button>
+        </div>
+
+        <div class="status" id="status">Drag the puppy to change the volume</div>
+
+        <div class="instructions">
+            <p><strong>Instructions:</strong> 
+            Volume changes based on how close you get.</p>
+        </div>
+    </div>
+
+    <script>
+        let volume = 0;
+        let isDragging = false;
+        let puppy = document.getElementById('puppy');
+        let gameArea = document.getElementById('gameArea');
+        let outline = document.getElementById('outline');
+        let status = document.getElementById('status');
+        let volumeDisplay = document.getElementById('volumeDisplay');
+        
+        // Position puppy randomly at start (far from center)
+        let puppyX = 50;
+        let puppyY = 50;
+        puppy.style.left = puppyX + 'px';
+        puppy.style.top = puppyY + 'px';
+
+        // Broken volume buttons - they do NOTHING
+        document.getElementById('volumeUp').addEventListener('click', () => {
+            status.textContent = "button doesn't work";
+        });
+
+        document.getElementById('volumeDown').addEventListener('click', () => {
+            status.textContent = "button is broken too";
+        });
+
+        function updateVolumeDisplay() {
+            let icon = '🔇';
+            if (volume > 0) icon = '🔉';
+            if (volume > 50) icon = '🔊';
+            if (volume > 80) icon = '📢';
+            
+            volumeDisplay.textContent = `${icon} ${volume}`;
+        }
+
+        function checkFit(puppyX, puppyY) {
+            // Get outline center position
+            let outlineX = (gameArea.offsetWidth / 2) - 75;  // outline is 150px, so center is -75
+            let outlineY = (gameArea.offsetHeight / 2) - 75; // outline is 150px, so center is -75
+            
+            // Get puppy center position
+            let puppyCenterX = puppyX + 75; // puppy is 150px, so center is +75
+            let puppyCenterY = puppyY + 75; // puppy is 150px, so center is +75
+            let outlineCenterX = outlineX + 75;
+            let outlineCenterY = outlineY + 75;
+            
+            // Calculate distance between centers
+            let distance = Math.sqrt(
+                Math.pow(puppyCenterX - outlineCenterX, 2) + 
+                Math.pow(puppyCenterY - outlineCenterY, 2)
+            );
+            
+            // Volume changes based on how well puppy fits
+            if (distance < 5) {
+                volume = 100;
+                status.textContent = "Max volume";
+            } else if (distance < 15) {
+                volume = 90;
+                status.textContent = "Almost perfect";
+            } else if (distance < 30) {
+                volume = 75;
+                status.textContent = "Very close";
+            } else if (distance < 50) {
+                volume = 60;
+                status.textContent = "Getting there";
+            } else if (distance < 80) {
+                volume = 40;
+                status.textContent = "Closer";
+            } else if (distance < 120) {
+                volume = 20;
+                status.textContent = "Still far away";
+            } else if (distance < 180) {
+                volume = 10;
+                status.textContent = "Very far";
+            } else {
+                volume = 0;
+                status.textContent = "Muted";
+            }
+            
+            updateVolumeDisplay();
+        }
+
+        // Initial check
+        checkFit(puppyX, puppyY);
